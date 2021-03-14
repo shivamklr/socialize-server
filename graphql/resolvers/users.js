@@ -4,7 +4,7 @@ const { UserInputError } = require("apollo-server");
 
 const User = require("../../models/User");
 const { SECRET_KEY } = require("../../config");
-const { validateRegisterInput } = require("../../util/validators");
+const { validateRegisterInput , validateLoginInput } = require("../../util/validators");
 
 module.exports = {
     Mutation: {
