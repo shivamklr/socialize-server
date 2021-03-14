@@ -1,10 +1,12 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { UserInputError } = require("apollo-server");
 
 const User = require("../../models/User");
-const { SECRET_KEY } = require("../../config");
-const { validateRegisterInput , validateLoginInput } = require("../../util/validators");
+const {
+    validateRegisterInput,
+    validateLoginInput,
+} = require("../../util/validators");
+const {createToken} = require("../../util/jwt");
 
 module.exports = {
     Mutation: {
@@ -41,19 +43,33 @@ module.exports = {
             });
 
             const res = await newUser.save();
-            // TODO: make jwt sign into a promise.
-            const token = jwt.sign(
-                {
-                    id: res.id,
-                    email: res.email,
-                    username: res.username,
-                },
-                SECRET_KEY,
-                { expiresIn: "1h" }
-            );
+            const token = createToken(res);
             return {
                 ...res._doc,
                 id: res._id,
+                token,
+            };
+        },
+        login: async (parent, args) => {
+            let { username, password } = args;
+            const { errors, valid } = validateLoginInput(username, password);
+            if (!valid) {
+                throw new UserInputError("Errors", { errors });
+            }
+            const user = await User.findOne({ username });
+            if (!user) {
+                errors.general = "User not found";
+                throw new UserInputError("User not found", { errors });
+            }
+            const match = await bcrypt.compare(password, user.password);
+            if (!match) {
+                errors.general = "Wrong credential";
+                throw new UserInputError("Wrong credentials", { errors });
+            }
+            const token = createToken(user);
+            return {
+                ...user._doc,
+                id: user._id,
                 token,
             };
         },
