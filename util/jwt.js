@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const { SECRET_KEY } = require("../config");
-// TODO: make jwt sign into a promise.
+// TODO: make jwt into a promise.
 module.exports.createToken = (user) =>
     jwt.sign(
         {
@@ -12,3 +12,4 @@ module.exports.createToken = (user) =>
         SECRET_KEY,
         { expiresIn: "1h" }
     );
+module.exports.verifyJWT = (token)=>jwt.verify(token, SECRET_KEY)
