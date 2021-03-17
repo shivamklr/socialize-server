@@ -1,3 +1,5 @@
+const { AuthenticationError } = require("apollo-server");
+
 const Post = require("../../models/Post");
 const checkAuth = require("../../util/check-auth");
 module.exports = {
@@ -34,6 +36,20 @@ module.exports = {
             });
             const post = await newPost.save();
             return post;
+        },
+        deletePost: async (parent, { postId }, context) => {
+            const user = checkAuth(context);
+            try {
+                const post = await Post.findById(postId);
+                console.log(user.id, JSON.stringify(post.user));
+                if (user.username === post.username) {
+                    post.delete();
+                    return "Post deleted successfully";
+                }
+                throw new AuthenticationError("Action not allowed");
+            } catch (err) {
+                throw new Error(err);
+            }
         },
     },
 };
