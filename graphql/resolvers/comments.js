@@ -31,11 +31,12 @@ module.exports = {
             try {
                 const post = await Post.findById(postId);
                 if (post) {
-                    console.log({ post });
                     const commentIndex = post.comments.findIndex(
                         (comment) => comment.id === commentId
                     );
-                    if (post.comments[commentIndex].username === username) {
+                    // FIXME: While working in an async and distributed system can cause
+                    // data inconsistencies.
+                    if (commentIndex!==-1 && post.comments[commentIndex].username === username) {
                         post.comments.splice(commentIndex, 1);
                         await post.save();
                         return post;
