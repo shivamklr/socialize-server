@@ -51,5 +51,29 @@ module.exports = {
                 throw new Error(err);
             }
         },
+        likePost: async (parent, { postId }, context) => {
+            const { username } = checkAuth(context);
+            const post = await Post.findById(postId);
+            if (post) {
+                // const likeIndex = ;
+                if (post.likes.find((like) => like.username === username)) {
+                    //Post already liked, unlike it
+                    post.likes = post.likes.filter(
+                        (like) => like.username !== username
+                    );
+                } else {
+                    //Post not liked
+                    post.likes.push({
+                        username,
+                        createdAt: new Date().toISOString(),
+                    });
+                }
+                await post.save();
+                return post;
+            } else {
+                // post does not exist
+                throw new Error("Post does not exist");
+            }
+        },
     },
 };
