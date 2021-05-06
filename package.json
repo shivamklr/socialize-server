@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "dependencies": {
@@ -14,5 +15,8 @@
     "mongoose": "^5.12.2",
     "nodemon": "^2.0.7",
     "validator": "^13.5.2"
+  },
+  "devDependencies": {
+    "dotenv": "^9.0.0"
   }
 }
