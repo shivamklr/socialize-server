@@ -1,6 +1,6 @@
 const { ApolloServer } = require("apollo-server");
 const mongoose = require("mongoose");
-const dotenv = process.env.NODE_ENV === "production" || require("dotenv");
+const MONGODB = process.env.DB_URI||require("./config").MONGODB;
 
 const resolvers = require("./graphql/resolvers");
 const typeDefs = require("./graphql/typeDefs");
@@ -10,8 +10,6 @@ const server = new ApolloServer({
     resolvers,
     context: ({ req }) => ({ req }),
 });
-process.env.NODE_ENV === "production"|| dotenv.config();
-const MONGODB = process.env.DB_URI;
 mongoose
     .connect(MONGODB, { useNewUrlParser: true })
     .then(() => {

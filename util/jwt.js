@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = process.env.SECRET_KEY;
+const SECRET_KEY = process.env.SECRET_KEY || require("../config").SECRET_KEY;
 // TODO: make jwt into a promise.
 module.exports.createToken = (user) =>
     jwt.sign(
