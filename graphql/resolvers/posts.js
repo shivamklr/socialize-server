@@ -27,7 +27,7 @@ module.exports = {
     },
     Mutation: {
         createPost: async (parent, args, context) => {
-            const user = checkAuth(context);
+            const user = await checkAuth(context);
             if(args.body.trim() === ''){
                 throw new Error("Post body must not be empty")
             }
@@ -41,7 +41,7 @@ module.exports = {
             return post;
         },
         deletePost: async (parent, { postId }, context) => {
-            const user = checkAuth(context);
+            const user = await checkAuth(context);
             try {
                 const post = await Post.findById(postId);
                 if (user.username === post.username) {
@@ -54,7 +54,7 @@ module.exports = {
             }
         },
         likePost: async (parent, { postId }, context) => {
-            const { username } = checkAuth(context);
+            const { username } = await checkAuth(context);
             const post = await Post.findById(postId);
             if (post) {
                 // const likeIndex = ;

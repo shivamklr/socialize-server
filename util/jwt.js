@@ -21,4 +21,13 @@ module.exports.createToken = (user) => {
 };
 
 // TODO: make jwt verify into a promise.
-module.exports.verifyJWT = (token) => jwt.verify(token, SECRET_KEY);
+module.exports.verifyJWT = (token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            resolve(decoded);
+        } catch (err) {
+            reject(err);
+        }
+    });
+};

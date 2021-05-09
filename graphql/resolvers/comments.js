@@ -4,7 +4,7 @@ const checkAuth = require("../../util/check-auth");
 module.exports = {
     Mutation: {
         createComment: async (parent, { body, postId }, context) => {
-            const user = checkAuth(context);
+            const user = await checkAuth(context);
             // validate comment body
             if (body.trim() === "") {
                 throw new UserInputError("Empty Comment", {
@@ -27,7 +27,7 @@ module.exports = {
             } else throw new UserInputError("Post not found");
         },
         deleteComment: async (parent, { postId, commentId }, context) => {
-            const { username } = checkAuth(context);
+            const { username } = await checkAuth(context);
             try {
                 const post = await Post.findById(postId);
                 if (post) {
