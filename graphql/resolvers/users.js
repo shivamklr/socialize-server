@@ -1,12 +1,12 @@
 const bcrypt = require("bcryptjs");
-const { UserInputError } = require("apollo-server");
+const { UserInputError, AuthenticationError } = require("apollo-server");
 
 const User = require("../../models/User");
 const {
     validateRegisterInput,
     validateLoginInput,
 } = require("../../util/validators");
-const {createToken} = require("../../util/jwt");
+const { createToken } = require("../../util/jwt");
 
 module.exports = {
     Mutation: {
@@ -43,7 +43,9 @@ module.exports = {
             });
 
             const res = await newUser.save();
-            const token = createToken(res);
+            const token = createToken(res).catch((err) => {
+                throw new Error("Error while creating token");
+            });
             return {
                 ...res._doc,
                 id: res._id,
@@ -66,7 +68,9 @@ module.exports = {
                 errors.general = "Wrong credential";
                 throw new UserInputError("Wrong credentials", { errors });
             }
-            const token = createToken(user);
+            const token = createToken(user).catch((err) => {
+                throw new Error("Error while creating token");
+            });
             return {
                 ...user._doc,
                 id: user._id,
