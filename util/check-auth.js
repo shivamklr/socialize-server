@@ -1,13 +1,13 @@
 const { AuthenticationError } = require("apollo-server");
 const { verifyJWT } = require("./jwt");
-module.exports = (context) => {
+module.exports = async (context) => {
     const authHeader = context.req.headers.authorization;
     if (authHeader) {
         // Bearer ....
         const token = authHeader.split("Bearer ")[1];
         if (token) {
             try {
-                return verifyJWT(token).catch(()=>{throw new Error("Could not verify JWT")});
+                return await verifyJWT(token);
             } catch (err) {
                 throw new AuthenticationError("Invalid/Expired token");
             }
